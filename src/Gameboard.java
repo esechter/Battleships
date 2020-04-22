@@ -5,9 +5,14 @@ public class Gameboard {
     private HashSet<List<Integer>> computerMoves = new HashSet<List<Integer>>();
     //private HashSet<List<Integer>> userMoves = new HashSet<List<Integer>>();
     private char[][] map;
+    private boolean isGameWon = false;
 
     public Gameboard() {
         map = new char[10][10];
+    }
+
+    public boolean isGameWon() {
+        return isGameWon;
     }
 
     @Override
