@@ -1,5 +1,14 @@
+import java.util.Scanner;
+
 public class Battleship {
+
     public static void main(String[] args) {
-        Gameboard game = new Gameboard();
+        Game newGame = new Game();
+        newGame.startGame();
+
     }
+
+
+
+
 }

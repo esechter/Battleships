@@ -1,25 +1,25 @@
 public enum GameboardState {
-    EMPTY ('0', " "),
-    PLAYERBOAT ('1', "@"),
-    COMPUTERBOAT ('2', " "),
-    SUNKPLAYERBOAT ('3', "x"),
-    SUNKCOMPUTERBOAT ('4', "!"),
-    PLAYERMISSED ('5', "-")
+    EMPTY (0, " "),
+    PLAYERBOAT (1, "@"),
+    COMPUTERBOAT (2, " "),
+    SUNKPLAYERBOAT (3, "x"),
+    SUNKCOMPUTERBOAT (4, "!"),
+    PLAYERMISSED (5, "-")
     ;
 
-    private final char arraySymbol;
+    private final int arraySymbol;
     private final String printSymbol;
 
-    GameboardState(char arraySymbol, String printSymbol) {
+    GameboardState(int arraySymbol, String printSymbol) {
         this.arraySymbol = arraySymbol;
         this.printSymbol = printSymbol;
     }
 
-    public char getValue() {
+    public int getValue() {
         return arraySymbol;
     }
 
-    public static boolean isEnum(char value) {
+    public static boolean isEnum(int value) {
         for (GameboardState state : GameboardState.values()) {
             if (state.getValue() == value) {
                 return true;
@@ -28,15 +28,15 @@ public enum GameboardState {
         return false;
     }
 
-    public String getEnumFromValue(char value) {
+    public static GameboardState getEnumFromValue(int value) {
         if (isEnum(value)) {
             for (GameboardState state : GameboardState.values()) {
                 if (state.getValue() == value) {
-                    return name();
+                    return state;
                 }
             }
         }
-        return value + " is not a valid GameBoardState";
+        return null;
     }
 
     @Override
