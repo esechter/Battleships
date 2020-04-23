@@ -15,6 +15,10 @@ public class Gameboard {
         map = new int[BOARDSIZE][BOARDSIZE];
     }
 
+    public int getBoardsize() {
+        return BOARDSIZE;
+    }
+
     public boolean isWon() {
         return isWon;
     }
@@ -54,9 +58,11 @@ public class Gameboard {
     public void addShip(String player, int X, int Y) {
         if (player.equals("user")) {
             userShips.add(putIntsInArray(X, Y));
+            map[X][Y] = GameboardState.PLAYERBOAT.getValue();
         }
         if (player.equals("computer")) {
             computerShips.add(putIntsInArray(X, Y));
+            map[X][Y] = GameboardState.COMPUTERBOAT.getValue();
         }
     }
 

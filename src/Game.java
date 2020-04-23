@@ -1,7 +1,8 @@
 import java.util.Scanner;
+import java.util.Random;
 
 public class Game {
-    private static final int NUMBEROFSHIPS = 5;
+    private static final int NUMBEROFSHIPS = 2;
     private boolean quitGame = false;
     private Scanner scanner;
     private Gameboard gameboard;
@@ -30,6 +31,7 @@ public class Game {
             }
         } while(!quitGame);
         if (!quitGame) {getAndPlaceShips();}
+        if (!quitGame) {System.out.println(gameboard.toString());}
 
         if (quitGame || gameboard.isWon() || gameboard.isLost()) {
             endGame();
@@ -39,6 +41,7 @@ public class Game {
     private void getAndPlaceShips() {
         System.out.println("Place your ships on the sea. Provide an X and Y coordinate for each ship.");
         int count = 0;
+        // get and place user ships
         while (count < NUMBEROFSHIPS && !quitGame) {
             System.out.printf("Enter X coordinate for ship %d: ", count + 1);
             if (scanner.hasNextInt()) {
@@ -70,6 +73,18 @@ public class Game {
                 System.out.println("Bad input, please try again");
             }
         }
+        // place computer ships
+        int computerShipCount = 0;
+        while (computerShipCount < NUMBEROFSHIPS) {
+            Random random = new Random();
+            int X = random.nextInt(gameboard.getBoardsize());
+            int Y = random.nextInt(gameboard.getBoardsize());
+            if (gameboard.isOnBoard(X, Y) && !gameboard.isAShip("computer", X, Y) && !gameboard.isAShip("user", X, Y)) {
+                gameboard.addShip("computer", X, Y);
+                computerShipCount++;
+            }
+        }
+
     }
 
     private void endGame() {
