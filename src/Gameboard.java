@@ -1,18 +1,72 @@
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 
 public class Gameboard {
-    private HashSet<List<Integer>> computerMoves = new HashSet<List<Integer>>();
-    //private HashSet<List<Integer>> userMoves = new HashSet<List<Integer>>();
+    private static final int BOARDSIZE = 10;
+    private HashSet<ArrayList<Integer>> userMoves = new HashSet<ArrayList<Integer>>();
+    private HashSet<ArrayList<Integer>> computerMoves = new HashSet<ArrayList<Integer>>();
+    private HashSet<ArrayList<Integer>> userShips = new HashSet<ArrayList<Integer>>();
+    private HashSet<ArrayList<Integer>> computerShips = new HashSet<ArrayList<Integer>>();
     private int[][] map;
-    private boolean isGameWon = false;
+    private boolean isWon = false;
+    private boolean isLost = false;
 
     public Gameboard() {
-        map = new int[10][10];
+        map = new int[BOARDSIZE][BOARDSIZE];
     }
 
-    public boolean isGameWon() {
-        return isGameWon;
+    public boolean isWon() {
+        return isWon;
+    }
+
+    public boolean isLost() {
+        return isLost;
+    }
+
+    public boolean isOnBoard(int X, int Y) {
+        return (X >= 0 && X <= BOARDSIZE - 1 && Y >= 0 && Y <= BOARDSIZE - 1);
+    }
+
+    public boolean isAShip(String player, int X, int Y) {
+        boolean ship = false;
+        switch (player) {
+            case "computer":
+                if (computerShips.contains(putIntsInArray(X, Y))) {
+                    return true;
+                }
+                break;
+            case "user":
+                if (userShips.contains(putIntsInArray(X, Y))) {
+                    return true;
+                }
+                break;
+        }
+        return false;
+    }
+
+    private ArrayList<Integer> putIntsInArray(int X, int Y) {
+        ArrayList<Integer> tempList = new ArrayList<Integer>();
+        tempList.add(X);
+        tempList.add(Y);
+        return tempList;
+    }
+
+    public void addShip(String player, int X, int Y) {
+        if (player.equals("user")) {
+            userShips.add(putIntsInArray(X, Y));
+        }
+        if (player.equals("computer")) {
+            computerShips.add(putIntsInArray(X, Y));
+        }
+    }
+
+    public void removeShip(String player, int X, int Y) {
+        if (player.equals("user")) {
+            userShips.remove(putIntsInArray(X, Y));
+        }
+        if (player.equals("computer")){
+            computerShips.remove((putIntsInArray(X, Y)));
+        }
     }
 
     @Override
@@ -23,17 +77,7 @@ public class Gameboard {
         for (int row = 0; row < map.length; row++) {
             mapString.append(row + " |");
             for (int column = 0; column < map[row].length; column++) {
-                mapString.append(map[row][column]);
-                /**switch(map[row][column]) {
-                 case PLAYERBOAT:
-                 mapString.append(PRINTPLAYERBOAT);
-                 break;
-                 case SUNKPLAYERBOAT:
-                 mapString.append((PRINTSUNKPLAYERBOAT));
-                 break;
-                 default:
-                 mapString.append(" ");
-                 }**/
+                mapString.append(GameboardState.getEnumFromValue(map[row][column]).toString());
             }
             mapString.append("| " + row + "\n");
         }
