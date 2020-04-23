@@ -4,11 +4,11 @@ import java.util.List;
 public class Gameboard {
     private HashSet<List<Integer>> computerMoves = new HashSet<List<Integer>>();
     //private HashSet<List<Integer>> userMoves = new HashSet<List<Integer>>();
-    private char[][] map;
+    private int[][] map;
     private boolean isGameWon = false;
 
     public Gameboard() {
-        map = new char[10][10];
+        map = new int[10][10];
     }
 
     public boolean isGameWon() {
