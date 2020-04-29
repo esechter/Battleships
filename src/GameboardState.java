@@ -1,7 +1,7 @@
 public enum GameboardState {
     EMPTY (0, " "),
     PLAYERBOAT (1, "@"),
-    COMPUTERBOAT (2, "%"),
+    COMPUTERBOAT (2, " "),
     SUNKPLAYERBOAT (3, "x"),
     SUNKCOMPUTERBOAT (4, "!"),
     PLAYERMISSED (5, "-")

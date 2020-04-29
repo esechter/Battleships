@@ -24,9 +24,9 @@ class GameboardTest {
         testGame.addShip("computer", 1,1);
         testGame.addShip("computer", 2, 2);
         // === when/then ===
-        Assertions.assertEquals(true, testGame.isAShip("user",8,9), "User ship already at 0, 0");
-        Assertions.assertEquals(false, testGame.isAShip("user", 5, 4), "No user ship at 5,4");
-        Assertions.assertEquals(true, testGame.isAShip("computer", 1, 1), "Computer ship at 1,1");
-        Assertions.assertEquals(false, testGame.isAShip("computer", 0,0), "No computer ship at 0, 0");
+        Assertions.assertEquals(true, testGame.isShip("user",8,9), "User ship already at 0, 0");
+        Assertions.assertEquals(false, testGame.isShip("user", 5, 4), "No user ship at 5,4");
+        Assertions.assertEquals(true, testGame.isShip("computer", 1, 1), "Computer ship at 1,1");
+        Assertions.assertEquals(false, testGame.isShip("computer", 0,0), "No computer ship at 0, 0");
     }
 }

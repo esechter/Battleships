@@ -2,7 +2,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 public class Gameboard {
-    private static final int BOARDSIZE = 10;
+    private static final int BOARD_SIZE = 5;
+    private static final int NUMBER_OF_SHIPS = 5;
     private HashSet<ArrayList<Integer>> userMoves = new HashSet<ArrayList<Integer>>();
     private HashSet<ArrayList<Integer>> computerMoves = new HashSet<ArrayList<Integer>>();
     private HashSet<ArrayList<Integer>> userShips = new HashSet<ArrayList<Integer>>();
@@ -12,11 +13,15 @@ public class Gameboard {
     private boolean isLost = false;
 
     public Gameboard() {
-        map = new int[BOARDSIZE][BOARDSIZE];
+        map = new int[BOARD_SIZE][BOARD_SIZE];
     }
 
-    public int getBoardsize() {
-        return BOARDSIZE;
+    public int getBoardSize() {
+        return BOARD_SIZE;
+    }
+
+    public int getNumberOfShips() {
+        return NUMBER_OF_SHIPS;
     }
 
     public boolean isWon() {
@@ -28,22 +33,35 @@ public class Gameboard {
     }
 
     public boolean isOnBoard(int X, int Y) {
-        return (X >= 0 && X <= BOARDSIZE - 1 && Y >= 0 && Y <= BOARDSIZE - 1);
+        return (X >= 0 && X <= BOARD_SIZE - 1 && Y >= 0 && Y <= BOARD_SIZE - 1);
     }
 
-    public boolean isAShip(String player, int X, int Y) {
-        boolean ship = false;
+    public boolean isShip(String player, int X, int Y) {
         switch (player) {
-            case "computer":
+            case "computer": //checks if this is location is a computer ship
                 if (computerShips.contains(putIntsInArray(X, Y))) {
                     return true;
                 }
                 break;
-            case "user":
+            case "user": //checks if this location is a user ship
                 if (userShips.contains(putIntsInArray(X, Y))) {
                     return true;
                 }
                 break;
+        }
+        return false;
+    }
+
+    public boolean isAlreadyGuessed(String player, int X, int Y) {
+        if (player.equals("user")) {
+            if (userMoves.contains(putIntsInArray(X, Y))) {
+                return true;
+            }
+        }
+        if (player.equals("computer")) {
+            if (computerMoves.contains(putIntsInArray(X, Y))) {
+                return true;
+            }
         }
         return false;
     }
@@ -75,10 +93,66 @@ public class Gameboard {
         }
     }
 
+    public void sinkShip(int X, int Y) {
+        if (map[X][Y] == GameboardState.PLAYERBOAT.getValue()) {
+            removeShip("user", X, Y);
+            map[X][Y] = GameboardState.SUNKPLAYERBOAT.getValue();
+        }
+        if (map[X][Y] == GameboardState.COMPUTERBOAT.getValue()) {
+            removeShip("computer", X, Y);
+            map[X][Y] = GameboardState.SUNKCOMPUTERBOAT.getValue();
+        }
+        if (userShips.isEmpty()) {
+            this.isLost = true;
+        }
+        if (computerShips.isEmpty()) {
+            this.isWon = true;
+        }
+    }
+
+    public int getShipsRemaining(String player) {
+        if (player.equals("user")) {
+            return this.userShips.size();
+        }
+        if (player.equals("computer")) {
+            return this.computerShips.size();
+        }
+        return -1;
+    }
+
+    public void addMove(String player, int X, int Y) {
+        if (player.equals(("user"))) {
+            userMoves.add(putIntsInArray(X, Y));
+        }
+        if (player.equals("computer")) {
+            computerMoves.add(putIntsInArray(X, Y));
+        }
+    }
+
+    public HashSet<ArrayList<Integer>> getMoveList(String player) {
+        if (player.equals("user")) {
+            return this.userMoves;
+        }
+        if (player.equals("computer")) {
+            return this.computerMoves;
+        }
+        return null;
+    }
+
+    public void addPlayerMiss(int X, int Y) {
+        map[X][Y] = GameboardState.PLAYERMISSED.getValue();
+    }
+
     @Override
     public String toString() {
-        String topAndBottomLine = "   0123456789   \n";
-        StringBuilder mapString = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
+        sb.append("   ");
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            sb.append(i);
+        }
+        sb.append("\n");
+        String topAndBottomLine = sb.toString();
+        StringBuilder mapString = new StringBuilder("\n");
         mapString.append(topAndBottomLine);
         for (int row = 0; row < map.length; row++) {
             mapString.append(row + " |");

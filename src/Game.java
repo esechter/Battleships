@@ -1,8 +1,9 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Random;
 
 public class Game {
-    private static final int NUMBER_OF_SHIPS = 2;
+    private int SLEEP_TIME = 1200;
     private boolean quitGame = false;
     private Scanner scanner;
     private Gameboard gameboard;
@@ -19,30 +20,30 @@ public class Game {
             } else if (input.equals("s")) {
                 System.out.println("Starting game...");
                 try {
-                    Thread.sleep(1800);
+                    Thread.sleep(SLEEP_TIME);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 System.out.println(gameboard.toString());
-                System.out.println("\nThe seas are empty!");
+                System.out.println("The seas are empty!");
                 break;
             } else {
                 System.out.println("Try again: 'S' to start a new game or 'Q' to quit");
             }
         } while(!quitGame);
-        if (!quitGame) {getAndPlaceShips();}
-        if (!quitGame) {System.out.println(gameboard.toString());}
-
+        if (!quitGame) getAndPlaceShips();
+        if (!quitGame) System.out.println(gameboard.toString());
+        if (!quitGame) attackSequence();
         if (quitGame || gameboard.isWon() || gameboard.isLost()) {
             endGame();
         }
     }
 
     private void getAndPlaceShips() {
-        System.out.println("Place your ships on the sea. Provide an X and Y coordinate for each ship.");
+        System.out.printf("Place %d ships. Provide an X and Y coordinate for each ship.\n", gameboard.getNumberOfShips());
         int count = 0;
         // get and place user ships
-        while (count < NUMBER_OF_SHIPS && !quitGame) {
+        while (count < gameboard.getNumberOfShips() && !quitGame) {
             int X = getUserInput(scanner, "X", count);
             if (quitGame) {
                 return;
@@ -51,26 +52,26 @@ public class Game {
             if (quitGame) {
                 return;
             }
-            if (gameboard.isOnBoard(X, Y) && !gameboard.isAShip("user", X, Y)) {
+            if (gameboard.isOnBoard(X, Y) && !gameboard.isShip("user", X, Y)) {
                 gameboard.addShip("user", X, Y);
                 count++;
             } else {
                 if (!gameboard.isOnBoard(X, Y)) {
                     System.out.printf("%d, %d is not on the game board. Please choose another location..\n", X, Y);
                 }
-                if (gameboard.isAShip("user", X, Y)) {
+                if (gameboard.isShip("user", X, Y)) {
                     System.out.printf("You already have a ship at %d, %d. Please choose another location.\n", X, Y);
                 }
             }
         }
         // place computer ships
-        System.out.printf("Computer is deploying %d ships... ", NUMBER_OF_SHIPS);
+        System.out.printf("Computer is deploying %d ships... ", gameboard.getNumberOfShips());
         int computerShipCount = 0;
-        while (computerShipCount < NUMBER_OF_SHIPS) {
+        while (computerShipCount < gameboard.getNumberOfShips()) {
             Random random = new Random();
-            int X = random.nextInt(gameboard.getBoardsize());
-            int Y = random.nextInt(gameboard.getBoardsize());
-            if (gameboard.isOnBoard(X, Y) && !gameboard.isAShip("computer", X, Y) && !gameboard.isAShip("user", X, Y)) {
+            int X = random.nextInt(gameboard.getBoardSize());
+            int Y = random.nextInt(gameboard.getBoardSize());
+            if (gameboard.isOnBoard(X, Y) && !gameboard.isShip("computer", X, Y) && !gameboard.isShip("user", X, Y)) {
                 gameboard.addShip("computer", X, Y);
                 computerShipCount++;
             }
@@ -80,11 +81,67 @@ public class Game {
 
     private void attackSequence() {
         while (!quitGame && !gameboard.isWon() && !gameboard.isLost()) {
-            // get user input which is valid guess or 'Q'
-            // update board
-            // check if won/lost
-            // get computer guess
-            // update board
+            System.out.println("\nYOUR TURN");
+            int X = -1;
+            int Y = -1;
+            boolean invalidInput = true;
+            while (invalidInput) {
+                X = getUserInput(scanner, "X");
+                if (quitGame) return;
+                Y = getUserInput(scanner, "Y");
+                if (quitGame) return;
+                if (!gameboard.isOnBoard(X, Y)) {
+                    System.out.printf("%d, %d is not on the game board. Please choose another location.\n", X, Y);
+                    continue;
+                }
+                if (gameboard.isAlreadyGuessed("user", X, Y)) {
+                    System.out.printf("You've already guessed %d, %d. Please choose another location.\n", X, Y);
+                    continue;
+                }
+                invalidInput = false;
+            }
+            gameboard.addMove("user", X, Y);
+            if (gameboard.isShip("computer", X, Y) || gameboard.isShip("user", X, Y)) {
+                gameboard.sinkShip(X, Y);
+                System.out.printf("Direct hit! Ship at %d, %d is sunk\n", X, Y);
+            } else {
+                System.out.printf("Nothing at %d, %d! You missed.\n", X, Y);
+                gameboard.addPlayerMiss(X, Y);
+            }
+            if (gameboard.isWon() || gameboard.isLost()) return;
+            try {
+                Thread.sleep(SLEEP_TIME);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println("\nCOMPUTER'S TURN");
+            invalidInput = true;
+            X = -1;
+            Y = -1;
+            while (invalidInput) {
+                Random random = new Random();
+                X = random.nextInt(gameboard.getBoardSize());
+                Y = random.nextInt(gameboard.getBoardSize());
+                if (gameboard.isOnBoard(X, Y) && !gameboard.isAlreadyGuessed("computer", X, Y)) {
+                    invalidInput = false;
+                    gameboard.addMove("computer", X, Y);
+                    if (gameboard.isShip("user", X, Y) || gameboard.isShip("computer", X, Y)) {
+                        gameboard.sinkShip(X, Y);
+                        System.out.printf("Computer sunk ship at %d, %d!\n", X, Y);
+                    } else {
+                        System.out.println("Computer missed.");
+                    }
+                }
+            }
+            if (gameboard.isWon() || gameboard.isLost()) return;
+            System.out.println(gameboard.toString());
+            System.out.printf("Your ships remaining: %d | Computer ships remaining: %d\n",
+                gameboard.getShipsRemaining("user"), gameboard.getShipsRemaining("computer"));
+            try {
+                Thread.sleep(SLEEP_TIME);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -93,13 +150,21 @@ public class Game {
         if (quitGame) {
             System.out.println("Quitting game...\nThanks for playing! Goodbye.");
         }
+        if (gameboard.isWon()) {
+            System.out.println(gameboard.toString());
+            System.out.println("You win! Congratulations :)");
+        }
+        if (gameboard.isLost()) {
+            System.out.println(gameboard.toString());
+            System.out.println("You lose :(");
+        }
     }
 
     private int getUserInput(Scanner scanner, String coordinate) {
         boolean invalidFeedback = true;
-        String input = scanner.next().toLowerCase();
         while(invalidFeedback) {
             System.out.printf("Enter %s coordinate to attack: ", coordinate);
+            String input = scanner.next().toLowerCase();
             if (input.equals("q")) {
                 quitGame = true;
                 invalidFeedback = false;
@@ -137,5 +202,19 @@ public class Game {
         }
 
         return -1;
+    }
+
+    private String getMoveList(String player) {
+        StringBuilder moveList = new StringBuilder();
+        moveList.append("[");
+        for (ArrayList<Integer> i : gameboard.getMoveList("computer")) {
+            moveList.append("(");
+            moveList.append(i.get(0));
+            moveList.append(", ");
+            moveList.append(i.get(1));
+            moveList.append(") ");
+        }
+        moveList.append("]");
+        return moveList.toString();
     }
 }
