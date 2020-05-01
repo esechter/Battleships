@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 public class Gameboard {
-    private static final int BOARD_SIZE = 5;
+    private static final int BOARD_SIZE = 10;
     private static final int NUMBER_OF_SHIPS = 5;
     private HashSet<ArrayList<Integer>> userMoves = new HashSet<>();
     private HashSet<ArrayList<Integer>> computerMoves = new HashSet<>();
