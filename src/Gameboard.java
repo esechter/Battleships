@@ -4,10 +4,10 @@ import java.util.HashSet;
 public class Gameboard {
     private static final int BOARD_SIZE = 5;
     private static final int NUMBER_OF_SHIPS = 5;
-    private HashSet<ArrayList<Integer>> userMoves = new HashSet<ArrayList<Integer>>();
-    private HashSet<ArrayList<Integer>> computerMoves = new HashSet<ArrayList<Integer>>();
-    private HashSet<ArrayList<Integer>> userShips = new HashSet<ArrayList<Integer>>();
-    private HashSet<ArrayList<Integer>> computerShips = new HashSet<ArrayList<Integer>>();
+    private HashSet<ArrayList<Integer>> userMoves = new HashSet<>();
+    private HashSet<ArrayList<Integer>> computerMoves = new HashSet<>();
+    private HashSet<ArrayList<Integer>> userShips = new HashSet<>();
+    private HashSet<ArrayList<Integer>> computerShips = new HashSet<>();
     private int[][] map;
     private boolean isWon = false;
     private boolean isLost = false;
@@ -76,11 +76,11 @@ public class Gameboard {
     public void addShip(String player, int X, int Y) {
         if (player.equals("user")) {
             userShips.add(putIntsInArray(X, Y));
-            map[X][Y] = GameboardState.PLAYERBOAT.getValue();
+            map[Y][X] = GameboardState.PLAYERBOAT.getValue();
         }
         if (player.equals("computer")) {
             computerShips.add(putIntsInArray(X, Y));
-            map[X][Y] = GameboardState.COMPUTERBOAT.getValue();
+            map[Y][X] = GameboardState.COMPUTERBOAT.getValue();
         }
     }
 
@@ -94,13 +94,13 @@ public class Gameboard {
     }
 
     public void sinkShip(int X, int Y) {
-        if (map[X][Y] == GameboardState.PLAYERBOAT.getValue()) {
+        if (map[Y][X] == GameboardState.PLAYERBOAT.getValue()) {
             removeShip("user", X, Y);
-            map[X][Y] = GameboardState.SUNKPLAYERBOAT.getValue();
+            map[Y][X] = GameboardState.SUNKPLAYERBOAT.getValue();
         }
-        if (map[X][Y] == GameboardState.COMPUTERBOAT.getValue()) {
+        if (map[Y][X] == GameboardState.COMPUTERBOAT.getValue()) {
             removeShip("computer", X, Y);
-            map[X][Y] = GameboardState.SUNKCOMPUTERBOAT.getValue();
+            map[Y][X] = GameboardState.SUNKCOMPUTERBOAT.getValue();
         }
         if (userShips.isEmpty()) {
             this.isLost = true;
@@ -140,7 +140,7 @@ public class Gameboard {
     }
 
     public void addPlayerMiss(int X, int Y) {
-        map[X][Y] = GameboardState.PLAYERMISSED.getValue();
+        map[Y][X] = GameboardState.PLAYERMISSED.getValue();
     }
 
     @Override
