@@ -29,4 +29,27 @@ class GameboardTest {
         Assertions.assertEquals(true, testGame.isShip("computer", 1, 1), "Computer ship at 1,1");
         Assertions.assertEquals(false, testGame.isShip("computer", 0,0), "No computer ship at 0, 0");
     }
+
+    // this test only works if the method is made public
+    /**
+    @Test
+    void validInputReturnsTrue() {
+        // === given/when ===
+        Game game = new Game();
+        // === then ===
+        Assertions.assertEquals(true, game.isValidCoordinate("5,5"), "5,5 is valid format");
+        Assertions.assertEquals(true, game.isValidCoordinate("5, 5"), "5, 5 is valid format");
+    }
+
+
+    @Test
+    void invalidInputReturnsFalse() {
+        // === given/when===
+        Game game = new Game();
+        // === then ===
+        Assertions.assertEquals(false, game.isValidCoordinate("QQQ"), "QQQ should not be valid");
+        Assertions.assertEquals(false, game.isValidCoordinate("11,5"), "11,5 should not be valid");
+        Assertions.assertEquals(false, game.isValidCoordinate("-1,5"), "-1,5 should now be valid");
+    }
+    **/
 }
